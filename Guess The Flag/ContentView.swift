@@ -37,7 +37,8 @@ struct ContentView: View {
     @State private var showScore = false
     @State private var score = 0
     @State private var scoreTitle = ""
-    
+    @State private var rotationDegrees = 0.0
+    @State private var opacityValue = 1.0
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
     
     @State private var correctAnswer = Int.random(in: 1...3)
@@ -45,6 +46,11 @@ struct ContentView: View {
     func flagTapped(_ number: Int){
         if number == correctAnswer{
             scoreTitle = "Correct"
+            
+            withAnimation{
+                rotationDegrees += 360
+                opacityValue = 0.25
+            }
             score += 1
         }else {
             scoreTitle = "Wrong that is the flag of \(countries[number])"
@@ -57,6 +63,7 @@ struct ContentView: View {
     func askQuestion(){
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        opacityValue = 1.0
     }
     
     var body: some View {
@@ -79,6 +86,12 @@ struct ContentView: View {
                     }) {
                         FlagView(imageName: countries[number])
                     }
+                    
+                    .rotation3DEffect(.degrees(number == correctAnswer ? rotationDegrees : 0.0),
+                        axis: (x: 0, y: 1, z: 0)
+                    )
+                    .opacity(number == correctAnswer ? 1.0 : opacityValue)
+                    
                 }
                 
                 Spacer()
